@@ -15,8 +15,7 @@ These data are collected at https://www.ine.es/index.htm
 npm install
 ```
 
-- When you deal with maps you can use two map formats GeoJSON or TopoJSON, topo JSON is lightweight and offers some extra
-  features, let's install the needed packages to work with:
+* Let's install the needed packages to work with:
 
 ```bash
 npm install topojson-client --save
@@ -26,7 +25,7 @@ npm install topojson-client --save
 npm install @types/topojson-client --save-dev
 ```
 
-- Let's install topojson:
+* Let's install topojson:
 
 ```bash
 npm install topojson --save
@@ -36,14 +35,19 @@ npm install topojson --save
 npm install @types/topojson --save-dev
 ```
 
-- Let's install the _composite projections_ project to display the Canary Island just below spain.
+* Let's install the _composite projections_ project to display the Canary Island just below spain.
 
 ```bash
 npm install d3-composite-projections --save
 ```
 
+
+
+* Calculation of radius' circles  
+
 ```typescript
-const calculateRadiusBasedOnAffectedCases = (comunidad: string,data: Numbers[]) => {
+
+const calculateRadiusBasedOnAffectedCases = (comunidad: string,data: data_covid_2020[]) => {
   const entry = data.find(item => item.name === comunidad);
   const affectedRadiusScale = d3
   .scaleLinear()
@@ -52,3 +56,38 @@ const calculateRadiusBasedOnAffectedCases = (comunidad: string,data: Numbers[]) 
   return entry ? affectedRadiusScale(entry.value) : 0;
 };
 ```
+
+
+
+* Update circles 
+
+```typescript
+const updateCircles = (data: data_covid_2020[]) => {
+    const circles = svg.selectAll("circle");
+    circles
+      .data(latLongCommunities)
+      .merge(circles as any)
+      .transition()
+      .duration(500)
+      .attr("r", d => calculateRadiusBasedOnAffectedCases(d.name, data));
+  };
+```
+
+* Application of update circle
+
+```typescript
+document
+  .getElementById("Covid")
+  .addEventListener("click", function handleResultsNow() {
+    updateCircles(defuncionesCovid);
+  });
+
+document
+  .getElementById("PosibleCovid")
+  .addEventListener("click", function handleResultsInitial() {
+    updateCircles(defuncionesPosibleCovid);
+  });
+
+  ```
+
+I have also modified _./src/stats.ts_ with the corresponding data from the INE.
