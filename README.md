@@ -91,3 +91,13 @@ document
   ```
 
 I have also modified _./src/stats.ts_ with the corresponding data from the INE.
+
+
+Finally, to add the image and due to a problem, I had to add ```type="module"``` in _./src/index.html_
+
+```html
+<body>
+    <img src="./tabla.png" />
+    <script src="./index.ts", type="module"></script>
+</body>
+```
