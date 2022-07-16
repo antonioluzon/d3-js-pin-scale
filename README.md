@@ -3,8 +3,11 @@
 # Deaths due to covid-19 identified virus and unidentified (suspected) virus, community
 
 Because I have not found current covid data, I have compiled data on deaths in Spain in 2020 by community. The first button activates deaths caused by covid officially, and the other activates deaths that may be caused by covid but not officially.
+These data are collected at https://www.ine.es/index.htm
 
-[gif](./Animation.gif)
+
+
+![alt-text](https://github.com/antonioluzon/d3-js-pin-scale/blob/main/Animation.gif)
 
 # Steps
 
