@@ -1,6 +1,6 @@
 export const latLongCommunities = [
   {
-    name: "Madrid",
+    name: "Comunidad de Madrid",
     long: -3.70256,
     lat: 40.4165
   },

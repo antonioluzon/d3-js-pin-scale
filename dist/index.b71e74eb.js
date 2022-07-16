@@ -538,16 +538,15 @@ var _communities = require("./communities");
 var _stats = require("./stats");
 const spainjson = require("./spain.json");
 const d3Composite = require("d3-composite-projections");
-const maxAffected = (0, _stats.stats).reduce((max, item)=>item.value > max ? item.value : max, 0);
-const affectedRadiusScale = _d3.scaleLinear().domain([
-    0,
-    maxAffected
-]).range([
-    0,
-    50
-]); // 50 pixel max radius, we could calculate it relative to width and height
-const calculateRadiusBasedOnAffectedCases = (comunidad)=>{
-    const entry = (0, _stats.stats).find((item)=>item.name === comunidad);
+const calculateRadiusBasedOnAffectedCases = (comunidad, data)=>{
+    const entry = data.find((item)=>item.name === comunidad);
+    const affectedRadiusScale = _d3.scaleLinear().domain([
+        0,
+        10000
+    ]).range([
+        5,
+        40
+    ]);
     return entry ? affectedRadiusScale(entry.value) : 0;
 };
 const svg = _d3.select("body").append("svg").attr("width", 1024).attr("height", 800).attr("style", "background-color: #FBFAF0");
@@ -561,15 +560,26 @@ const geoPath = _d3.geoPath().projection(aProjection);
 const geojson = _topojsonClient.feature(spainjson, spainjson.objects.ESP_adm1);
 svg.selectAll("path").data(geojson["features"]).enter().append("path").attr("class", "country")// data loaded from json file
 .attr("d", geoPath);
-svg.selectAll("circle").data((0, _communities.latLongCommunities)).enter().append("circle").attr("class", "affected-marker").attr("r", (d)=>calculateRadiusBasedOnAffectedCases(d.name)).attr("cx", (d)=>aProjection([
+svg.selectAll("circle").data((0, _communities.latLongCommunities)).enter().append("circle").attr("class", "affected-marker").attr("r", (d)=>calculateRadiusBasedOnAffectedCases(d.name, (0, _stats.defuncionesCovid))).attr("cx", (d)=>aProjection([
         d.long,
         d.lat
     ])[0]).attr("cy", (d)=>aProjection([
         d.long,
         d.lat
     ])[1]);
+//update buttons
+const updateCircles = (data)=>{
+    const circles = svg.selectAll("circle");
+    circles.data((0, _communities.latLongCommunities)).merge(circles).transition().duration(500).attr("r", (d)=>calculateRadiusBasedOnAffectedCases(d.name, data));
+};
+document.getElementById("Covid").addEventListener("click", function handleResultsNow() {
+    updateCircles((0, _stats.defuncionesCovid));
+});
+document.getElementById("PosibleCovid").addEventListener("click", function handleResultsInitial() {
+    updateCircles((0, _stats.defuncionesPosibleCovid));
+});
 
-},{"d3":"iUtZE","topojson-client":"ciUQq","./communities":"b2Noj","./stats":"dxtga","./spain.json":"cMNVF","d3-composite-projections":"4XLj6"}],"iUtZE":[function(require,module,exports) {
+},{"d3":"iUtZE","topojson-client":"ciUQq","./communities":"b2Noj","./spain.json":"cMNVF","d3-composite-projections":"4XLj6","./stats":"dxtga"}],"iUtZE":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "version", ()=>(0, _packageJs.version));
@@ -20590,7 +20600,7 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "latLongCommunities", ()=>latLongCommunities);
 const latLongCommunities = [
     {
-        name: "Madrid",
+        name: "Comunidad de Madrid",
         long: -3.70256,
         lat: 40.4165
     },
@@ -20673,81 +20683,6 @@ const latLongCommunities = [
         name: "La Rioja",
         long: -2.445556,
         lat: 42.465
-    }
-];
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dxtga":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "stats", ()=>stats);
-const stats = [
-    {
-        name: "Madrid",
-        value: 587
-    },
-    {
-        name: "La Rioja",
-        value: 102
-    },
-    {
-        name: "Andaluc\xeda",
-        value: 54
-    },
-    {
-        name: "Catalu\xf1a",
-        value: 101
-    },
-    {
-        name: "Valencia",
-        value: 50
-    },
-    {
-        name: "Murcia",
-        value: 5
-    },
-    {
-        name: "Extremadura",
-        value: 7
-    },
-    {
-        name: "Castilla La Mancha",
-        value: 26
-    },
-    {
-        name: "Pa\xeds Vasco",
-        value: 148
-    },
-    {
-        name: "Cantabria",
-        value: 12
-    },
-    {
-        name: "Asturias",
-        value: 10
-    },
-    {
-        name: "Galicia",
-        value: 18
-    },
-    {
-        name: "Arag\xf3n",
-        value: 32
-    },
-    {
-        name: "Castilla y Le\xf3n",
-        value: 40
-    },
-    {
-        name: "Islas Canarias",
-        value: 24
-    },
-    {
-        name: "Islas Baleares",
-        value: 11
-    },
-    {
-        name: "Navarra",
-        value: 13
     }
 ];
 
@@ -27067,6 +27002,152 @@ exports.default = function() {
     return albersUk.scale(2800);
 };
 
-},{"./math":"e6zZ7","d3-geo":"8r6MJ","./fit":"3PIRf","d3-path":"fDKwR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["iJYvl","h7u1C"], "h7u1C", "parcelRequire331c")
+},{"./math":"e6zZ7","d3-geo":"8r6MJ","./fit":"3PIRf","d3-path":"fDKwR","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dxtga":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "defuncionesCovid", ()=>defuncionesCovid);
+parcelHelpers.export(exports, "defuncionesPosibleCovid", ()=>defuncionesPosibleCovid);
+const defuncionesCovid = [
+    {
+        name: "Comunidad de Madrid",
+        value: 14540
+    },
+    {
+        name: "La Rioja",
+        value: 577
+    },
+    {
+        name: "Andaluc\xeda",
+        value: 5821
+    },
+    {
+        name: "Catalu\xf1a",
+        value: 12871
+    },
+    {
+        name: "Comunidad Valenciana",
+        value: 3161
+    },
+    {
+        name: "Regi\xf3n de Murcia",
+        value: 738
+    },
+    {
+        name: "Extremadura",
+        value: 1099
+    },
+    {
+        name: "Castilla-La Mancha",
+        value: 4817
+    },
+    {
+        name: "Pa\xeds Vasco",
+        value: 2753
+    },
+    {
+        name: "Cantabria",
+        value: 427
+    },
+    {
+        name: "Principado de Asturias",
+        value: 1513
+    },
+    {
+        name: "Galicia",
+        value: 1499
+    },
+    {
+        name: "Arag\xf3n",
+        value: 2653
+    },
+    {
+        name: "Castilla y Le\xf3n",
+        value: 5823
+    },
+    {
+        name: "Islas Canarias",
+        value: 403
+    },
+    {
+        name: "Islas Baleares",
+        value: 557
+    },
+    {
+        name: "Comunidad Foral de Navarra",
+        value: 1004
+    }
+];
+const defuncionesPosibleCovid = [
+    {
+        name: "Comunidad de Madrid",
+        value: 4817
+    },
+    {
+        name: "La Rioja",
+        value: 71
+    },
+    {
+        name: "Andaluc\xeda",
+        value: 696
+    },
+    {
+        name: "Catalu\xf1a",
+        value: 3013
+    },
+    {
+        name: "Comunidad Valenciana",
+        value: 651
+    },
+    {
+        name: "Regi\xf3n de Murcia",
+        value: 32
+    },
+    {
+        name: "Extremadura",
+        value: 290
+    },
+    {
+        name: "Castilla-La Mancha",
+        value: 1683
+    },
+    {
+        name: "Pa\xeds Vasco",
+        value: 311
+    },
+    {
+        name: "Cantabria",
+        value: 68
+    },
+    {
+        name: "Principado de Asturias",
+        value: 260
+    },
+    {
+        name: "Galicia",
+        value: 83
+    },
+    {
+        name: "Arag\xf3n",
+        value: 289
+    },
+    {
+        name: "Castilla y Le\xf3n",
+        value: 1889
+    },
+    {
+        name: "Islas Canarias",
+        value: 98
+    },
+    {
+        name: "Islas Baleares",
+        value: 53
+    },
+    {
+        name: "Comunidad Foral de Navarra",
+        value: 179
+    }
+];
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["iJYvl","h7u1C"], "h7u1C", "parcelRequire331c")
 
 //# sourceMappingURL=index.b71e74eb.js.map

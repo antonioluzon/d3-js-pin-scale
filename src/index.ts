@@ -3,21 +3,14 @@ import * as topojson from "topojson-client";
 const spainjson = require("./spain.json");
 const d3Composite = require("d3-composite-projections");
 import { latLongCommunities } from "./communities";
-import { stats } from "./stats";
+import { defuncionesCovid,defuncionesPosibleCovid,data_covid_2020 } from "./stats";
 
-const maxAffected = stats.reduce(
-  (max, item) => (item.value > max ? item.value : max),
-  0
-);
-
-const affectedRadiusScale = d3
+const calculateRadiusBasedOnAffectedCases = (comunidad: string,data: data_covid_2020[]) => {
+  const entry = data.find(item => item.name === comunidad);
+  const affectedRadiusScale = d3
   .scaleLinear()
-  .domain([0, maxAffected])
-  .range([0, 50]); // 50 pixel max radius, we could calculate it relative to width and height
-
-const calculateRadiusBasedOnAffectedCases = (comunidad: string) => {
-  const entry = stats.find(item => item.name === comunidad);
-
+  .domain([0, 10000])
+  .range([5, 40]); 
   return entry ? affectedRadiusScale(entry.value) : 0;
 };
 
@@ -53,6 +46,32 @@ svg
   .enter()
   .append("circle")
   .attr("class", "affected-marker")
-  .attr("r", d => calculateRadiusBasedOnAffectedCases(d.name))
+  .attr("r", d => calculateRadiusBasedOnAffectedCases(d.name,defuncionesCovid))
   .attr("cx", d => aProjection([d.long, d.lat])[0])
   .attr("cy", d => aProjection([d.long, d.lat])[1]);
+
+
+  //update buttons
+const updateCircles = (data: data_covid_2020[]) => {
+    const circles = svg.selectAll("circle");
+    circles
+      .data(latLongCommunities)
+      .merge(circles as any)
+      .transition()
+      .duration(500)
+      .attr("r", d => calculateRadiusBasedOnAffectedCases(d.name, data));
+  };
+
+document
+  .getElementById("Covid")
+  .addEventListener("click", function handleResultsNow() {
+    updateCircles(defuncionesCovid);
+  });
+
+document
+  .getElementById("PosibleCovid")
+  .addEventListener("click", function handleResultsInitial() {
+    updateCircles(defuncionesPosibleCovid);
+  });
+
+

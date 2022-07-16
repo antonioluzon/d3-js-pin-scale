@@ -1,70 +1,146 @@
-export const stats = [
+export interface data_covid_2020 {
+  name: string;
+  value: number;
+}
+
+export const defuncionesCovid: data_covid_2020[] = [
   {
-    name: "Madrid",
-    value: 587
+    name: "Comunidad de Madrid",
+    value: 14540
   },
   {
     name: "La Rioja",
-    value: 102
+    value: 577
   },
   {
     name: "Andalucía",
-    value: 54
+    value: 5821
   },
   {
     name: "Cataluña",
-    value: 101
+    value: 12871
   },
   {
-    name: "Valencia",
-    value: 50
+    name: "Comunidad Valenciana",
+    value: 3161
   },
   {
-    name: "Murcia",
-    value: 5
+    name: "Región de Murcia",
+    value: 738
   },
   {
     name: "Extremadura",
-    value: 7
+    value: 1099
   },
   {
-    name: "Castilla La Mancha",
-    value: 26
+    name: "Castilla-La Mancha",
+    value: 4817
   },
   {
     name: "País Vasco",
-    value: 148
+    value: 2753
   },
   {
     name: "Cantabria",
-    value: 12
+    value: 427
   },
   {
-    name: "Asturias",
-    value: 10
+    name: "Principado de Asturias",
+    value: 1513
   },
   {
     name: "Galicia",
-    value: 18
+    value: 1499
   },
   {
     name: "Aragón",
-    value: 32
+    value: 2653
   },
   {
     name: "Castilla y León",
-    value: 40
+    value: 5823
   },
   {
     name: "Islas Canarias",
-    value: 24
+    value: 403
   },
   {
     name: "Islas Baleares",
-    value: 11
+    value: 557
   },
   {
-    name: "Navarra",
-    value: 13
+    name: "Comunidad Foral de Navarra",
+    value: 1004
+  }
+];
+
+export const defuncionesPosibleCovid: data_covid_2020[] = [
+  {
+    name: "Comunidad de Madrid",
+    value: 4817
+  },
+  {
+    name: "La Rioja",
+    value: 71
+  },
+  {
+    name: "Andalucía",
+    value: 696
+  },
+  {
+    name: "Cataluña",
+    value: 3013
+  },
+  {
+    name: "Comunidad Valenciana",
+    value: 651
+  },
+  {
+    name: "Región de Murcia",
+    value: 32
+  },
+  {
+    name: "Extremadura",
+    value: 290
+  },
+  {
+    name: "Castilla-La Mancha",
+    value: 1683
+  },
+  {
+    name: "País Vasco",
+    value: 311
+  },
+  {
+    name: "Cantabria",
+    value: 68
+  },
+  {
+    name: "Principado de Asturias",
+    value: 260
+  },
+  {
+    name: "Galicia",
+    value: 83
+  },
+  {
+    name: "Aragón",
+    value: 289
+  },
+  {
+    name: "Castilla y León",
+    value: 1889
+  },
+  {
+    name: "Islas Canarias",
+    value: 98
+  },
+  {
+    name: "Islas Baleares",
+    value: 53
+  },
+  {
+    name: "Comunidad Foral de Navarra",
+    value: 179
   }
 ];
